@@ -5,7 +5,7 @@ import "./globals.css";
 export default function RootLayout() {
   return (
     <>
-      // to remove the phone status bar(battery, time, etc)
+      {/* Hide the device status bar. */}
       <StatusBar hidden={true} />
       <Stack>
         <Stack.Screen 

@@ -3,7 +3,7 @@ import { fetchMovieDetails } from '@/services/api';
 import useFetch from '@/services/useFetch';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface MovieInfoProps {
   label: string;
@@ -17,10 +17,18 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
   </View>
 )
 
+const formatMillions = (value?: number, emptyLabel = 'N/A') => {
+  if (typeof value !== 'number' || value <= 0) {
+    return emptyLabel
+  }
+
+  return `$${Math.round(value / 1000000)} million`
+}
+
 const MovieDetails = () => {
     const { id } = useLocalSearchParams();
 
-    const { data: movie, loading } = useFetch(() => fetchMovieDetails(id as string)); 
+    const { data: movie } = useFetch(() => fetchMovieDetails(id as string)); 
 
   return (
     <View className='bg-primary flex-1'>
@@ -47,15 +55,15 @@ const MovieDetails = () => {
           <MovieInfo label="Genres" value={movie?.genres?.map((g) => g.name).join(' - ') || 'N/A'} />
 
           <View className='flex flex-row justify-between w-1/2'>
-            <MovieInfo label="Budget" value={`$${(movie?.budget ?? 'No Budget') / 1000000} million`} />
-            <MovieInfo label="Revenue" value={`$${Math.round(movie?.revenue ?? 'No Revenue') / 1000000}`} />
+            <MovieInfo label="Budget" value={formatMillions(movie?.budget, 'No Budget')} />
+            <MovieInfo label="Revenue" value={formatMillions(movie?.revenue, 'No Revenue')} />
           </View>
 
           <MovieInfo label="Production Companies" value={movie?.production_companies.map((c) => c.name).join(' -  ') || 'N/A'} />
         </View>
       </ScrollView>
 
-      // button to go back to previous page
+      {/* Button to go back to the previous page. */}
       <TouchableOpacity 
         className='absolute bottom-5 left-0 right-0 mx-5 bg-accent rounded-lg py-3.5 flex flex-row items-center justify-center z-50'
         onPress={router.back}
@@ -68,5 +76,3 @@ const MovieDetails = () => {
 }
 
 export default MovieDetails
-
-const styles = StyleSheet.create({})

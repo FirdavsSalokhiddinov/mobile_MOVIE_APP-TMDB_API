@@ -8,35 +8,34 @@ import useFetch from '@/services/useFetch'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native'
 
-const search = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+const Search = () => {
+  const [searchQuery, setSearchQuery] = useState('')
 
   const {
-    data: movies, 
-    loading, 
+    data: movies,
+    loading,
     error,
     refetch: loadMovies,
     reset,
-  } = useFetch(() => featchMovies({query: searchQuery}), false);
+  } = useFetch(() => featchMovies({ query: searchQuery }), false)
 
   useEffect(() => {
-
     const timeoutId = setTimeout(async () => {
-      if(searchQuery.trim()) {
-        await loadMovies();
+      if (searchQuery.trim()) {
+        await loadMovies()
       } else {
-        reset();
+        reset()
       }
-    }, 500);
+    }, 500)
 
-    return () => clearTimeout(timeoutId); 
-  }, [searchQuery]);
+    return () => clearTimeout(timeoutId)
+  }, [loadMovies, reset, searchQuery])
 
   useEffect(() => {
-    if(movies && movies.length > 0) {
-      updateSearchCount(searchQuery, movies?.[0]);
+    if (movies && movies.length > 0 && searchQuery.trim()) {
+      updateSearchCount(searchQuery, movies[0])
     }
-  }, [movies]);
+  }, [movies, searchQuery])
 
   return (
     <View className="flex-1 bg-primary">
@@ -100,4 +99,4 @@ const search = () => {
   )
 }
 
-export default search
+export default Search
